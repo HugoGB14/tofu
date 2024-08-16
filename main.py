@@ -14,7 +14,7 @@ def addtree(rArgs):
     p.add_argument('ids', type=str)
     args = p.parse_args(rArgs)
     
-    content = f'[{','.join(set(json.loads(args.ids)))}]'
+    content = f'{json.loads(args.ids)}'
         
     header = f"Tree {len(content.encode())}"
     storage = f"{header}\0{content}".encode()
