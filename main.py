@@ -23,7 +23,7 @@ def addtree(rArgs):
     try:
         for obj in json.loads(args.ids):
             jsonschema.validate(instance=obj, schema=treeschema)
-        content = f'{json.loads(args.ids)}'
+        content = json.dumps(json.loads(args.ids), indent=4)
     except json.decoder.JSONDecodeError as e:
         print(e)
         exit(1)
