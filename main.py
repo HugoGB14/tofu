@@ -14,7 +14,11 @@ def addtree(rArgs):
     p.add_argument('ids', type=str)
     args = p.parse_args(rArgs)
     
-    content = f'{json.loads(args.ids)}'
+    try:
+        content = f'{json.loads(args.ids)}'
+    except json.decoder.JSONDecodeError as e:
+        print(e)
+        exit(1)
         
     header = f"Tree {len(content.encode())}"
     storage = f"{header}\0{content}".encode()
