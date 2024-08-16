@@ -3,22 +3,33 @@ import os
 from hashlib import sha1
 import zlib
 import json
+import jsonschema
 
 def init(_):
     os.mkdir('./.tofu')
     os.chdir('./.tofu')
     os.mkdir('./objects')
+    
+treeschema = {
+    "name": "string",
+    "id": 'string'
+}
 
 def addtree(rArgs):
     p = argparse.ArgumentParser()
     p.add_argument('ids', type=str)
     args = p.parse_args(rArgs)
-    
+
     try:
+        for obj in json.loads(args.ids):
+            jsonschema.validate(instance=obj, schema=treeschema)
         content = f'{json.loads(args.ids)}'
     except json.decoder.JSONDecodeError as e:
         print(e)
         exit(1)
+    except jsonschema.ValidationError as e:
+        print(e)
+        exit
         
     header = f"Tree {len(content.encode())}"
     storage = f"{header}\0{content}".encode()
@@ -32,7 +43,8 @@ def addtree(rArgs):
     with open(shaid[2:40], 'wb') as f:
         f.write(compresStorage)
     print(shaid)
-    
+
+
 def addblob(rArgs):
     p = argparse.ArgumentParser()
     p.add_argument('file', type=str)
