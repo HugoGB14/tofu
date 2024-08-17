@@ -8,17 +8,16 @@ def init(_):
     os.mkdir('./objects')
 
 cmch = {
-    'init': plumbFuncs.init,
-    'blob': plumbFuncs.addblob,
+    'init': init,
+    'addblob': plumbFuncs.addblob,
     'cat-file': plumbFuncs.catFile,
-    'tree': plumbFuncs.addtree,
+    'addtree': plumbFuncs.addtree,
     'addcommit': plumbFuncs.addcommit
 }
 
-
 def main():
     ap = argparse.ArgumentParser('Tofu',description='tofu VCS')
-    ap.add_argument('command', type=str, help='Action', choices=['init','blob','cat-file','tree'])
+    ap.add_argument('command', type=str, help='Action', choices=list(cmch.keys()))
     
     args, sArgs = ap.parse_known_args()
     
