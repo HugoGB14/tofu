@@ -17,7 +17,7 @@ def addcommit(rArgs):
     p.add_argument('email', type=str)
     args = p.parse_args(rArgs)
 
-    content = {'tree': args.tree, 'parent': args.parent, 'author': args.email}
+    content = json.dumps({'tree': args.tree, 'parent': args.parent, 'author': args.email})
         
     header = f"Commit {len(content.encode())}"
     storage = f"{header}\0{content}".encode()
