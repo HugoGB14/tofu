@@ -15,6 +15,28 @@ treeschema = {
     "id": 'string'
 }
 
+def addcommit(rArgs):
+    p = argparse.ArgumentParser()
+    p.add_argument('tree', type=str)
+    p.add_argument('-p','--parent', type=str, required=False)
+    p.add_argument('email', type=str)
+    args = p.parse_args(rArgs)
+
+    content = {'tree': args.tree, 'parent': args.parent, 'author': args.email}
+        
+    header = f"Commit {len(content.encode())}"
+    storage = f"{header}\0{content}".encode()
+    shaid = sha1(storage).hexdigest()
+    compresStorage = zlib.compress(storage)
+    
+    os.chdir('./.tofu/objects')
+    os.mkdir(f'./{shaid[0:2]}')
+    os.chdir(f'./{shaid[0:2]}')
+    
+    with open(shaid[2:40], 'wb') as f:
+        f.write(compresStorage)
+    print(shaid)
+
 def addtree(rArgs):
     p = argparse.ArgumentParser()
     p.add_argument('ids', type=str)
@@ -22,6 +44,7 @@ def addtree(rArgs):
 
     try:
         for obj in json.loads(args.ids):
+            if not isinstance(obj, dict): raise jsonschema.ValidationError('A one object not is dicionary')
             jsonschema.validate(instance=obj, schema=treeschema)
         content = json.dumps(json.loads(args.ids), indent=4)
     except json.decoder.JSONDecodeError as e:
@@ -29,7 +52,7 @@ def addtree(rArgs):
         exit(1)
     except jsonschema.ValidationError as e:
         print(e)
-        exit
+        exit(1)
         
     header = f"Tree {len(content.encode())}"
     storage = f"{header}\0{content}".encode()
